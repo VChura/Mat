@@ -1,0 +1,61 @@
+import random 
+import matplotlib.pyplot as plt 
+ 
+def simulate_game(num_rounds): 
+    previous_boxes = set() 
+ 
+
+    total_boxes = 10 
+
+    player1_choice = random.randint(1, total_boxes) 
+
+    available_boxes = list(set(range(1, total_boxes+1)) - {player1_choice}) 
+    player2_choice = random.choice(available_boxes) 
+
+    previous_boxes.add(player1_choice) 
+    previous_boxes.add(player2_choice) 
+
+    if player1_choice == player2_choice: 
+        return True 
+ 
+    for round_number in range(2, num_rounds + 1): 
+        valid_choices = set(range(1, total_boxes+1)) & {player1_choice - 1, player1_choice + 1} 
+        player1_choice = random.choice(list(valid_choices)) 
+        previous_boxes.add(player1_choice)  
+ 
+        available_boxes = list(set(range(1, total_boxes+1)) - {player1_choice} - {player2_choice}) 
+        player2_choice = random.choice(available_boxes) 
+        previous_boxes.add(player2_choice)  
+        
+        if player1_choice == player2_choice: 
+            return True 
+ 
+        total_boxes += 1 
+ 
+    return False 
+ 
+if __name__ == "__main__": 
+    num_simulations = 10 
+    results = []  
+ 
+    for num_rounds in range(1, 101):   
+        same_box_count = 0  
+ 
+        for i in range(1, num_simulations + 1): 
+            print(f"--- Simulation {i} for {num_rounds} Rounds ---") 
+            result = simulate_game(num_rounds) 
+ 
+            if result: 
+                same_box_count += 1 
+ 
+            print() 
+ 
+        probability = same_box_count / num_simulations 
+        results.append(probability) 
+ 
+
+    plt.scatter(range(1, 101), results, marker='o') 
+    plt.xlabel('Number of Rounds') 
+    plt.ylabel('Probability of Both Players Choosing the Same Box') 
+    plt.title('Scatter Plot of Game Results') 
+    plt.show() 
